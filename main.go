@@ -10,7 +10,7 @@ import (
 )
 
 type Result struct{
-	Success bool
+    Success bool
     ErrCode string 
     Value int  
 }
@@ -47,19 +47,19 @@ func CheckNum(vals map[string][]string) (nOne,nTwo int,err string){
 
 	numOne, ok := vals["a"]
 	if !ok{
-		return 0, 0, Num1None
+	   return 0, 0, Num1None
 	} 
 	numTwo, ok := vals["b"]
 	if !ok{
-		return 0, 0, Num2None
+	   return 0, 0, Num2None
 	} 
 	nOne, er = strconv.Atoi(numOne[0])
 	if er != nil{
-		return 0, 0, er.Error()
+	   return 0, 0, er.Error()
 	}
 	nTwo, er = strconv.Atoi(numTwo[0])
 	if er != nil{
-		return 0, 0, er.Error()
+	   return 0, 0, er.Error()
 	}
 	return nOne, nTwo, ""
 }
@@ -68,21 +68,21 @@ func AddHandler(w http.ResponseWriter, r *http.Request) {
 	var res Result
 	vals := r.URL.Query()
 
-	nOne, nTwo, err:= CheckNum(vals)
+	nOne, nTwo, err := CheckNum(vals)
 	
 	res.ErrCode = err
 	if res.ErrCode == ""{
-		res = Calculate(nOne,nTwo,"+")
+	   res = Calculate(nOne,nTwo,"+")
 	}else{
-		res.Success = false
+	   res.Success = false
 	}
 
 	json_data, er := json.Marshal(res)
 	if er != nil {     
-        http.Error(w, er.Error(), 404)
-        return
-    }
-    w.Write(json_data)  
+           http.Error(w, er.Error(), 404)
+           return
+        }
+        w.Write(json_data)  
 
 }
 
@@ -94,16 +94,16 @@ func SubHandler(w http.ResponseWriter, r *http.Request) {
 
 	res.ErrCode = err
 	if res.ErrCode == ""{
-		res = Calculate(nOne,nTwo,"-")
+	   res = Calculate(nOne,nTwo,"-")
 	}else{
-		res.Success = false
+	   res.Success = false
 	}
 	json_data, er := json.Marshal(res)
 	if er != nil {     
-        http.Error(w, er.Error(), 404)
-        return
-    }
-    w.Write(json_data) 
+           http.Error(w, er.Error(), 404)
+           return
+        }
+        w.Write(json_data) 
 }
 
 func MulHandler(w http.ResponseWriter, r *http.Request) {
@@ -114,17 +114,17 @@ func MulHandler(w http.ResponseWriter, r *http.Request) {
 
 	res.ErrCode = err
 	if res.ErrCode == ""{
-		res = Calculate(nOne,nTwo,"*")
+	    res = Calculate(nOne,nTwo,"*")
 	}else{
-		res.Success = false
+	    res.Success = false
 	}
 
 	json_data, er := json.Marshal(res)
 	if er != nil {     
-        http.Error(w, er.Error(), 404)
-        return
-    }
-    w.Write(json_data) 
+           http.Error(w, er.Error(), 404)
+           return
+        }
+        w.Write(json_data) 
 }
 
 func DivHandler(w http.ResponseWriter, r *http.Request) {
@@ -137,21 +137,21 @@ func DivHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch{
 	case nTwo == 0:
-		res.ErrCode = NumZero
+	   res.ErrCode = NumZero
 	case nOne * nOne < nTwo * nTwo:
-		res.ErrCode = FloatRes
+	   res.ErrCode = FloatRes
 	}
 
 	if res.ErrCode == "" {
-		res = Calculate(nOne,nTwo,"/")
+ 	   res = Calculate(nOne,nTwo,"/")
 	}else{
-		res.Success = false
+	   res.Success = false
 	}
 	json_data, er := json.Marshal(res)
 	if er != nil {     
-        http.Error(w, er.Error(), 404)
-        return
-    }
+           http.Error(w, er.Error(), 404)
+           return
+        }
     w.Write(json_data) 
 }
 
@@ -159,10 +159,10 @@ func main(){
 	fmt.Println("")
 	r := mux.NewRouter()
 	sub := r.PathPrefix("/api/").Subrouter()
-    sub.HandleFunc("/add", AddHandler).Methods("GET")
+        sub.HandleFunc("/add", AddHandler).Methods("GET")
 	sub.HandleFunc("/sub", SubHandler).Methods("GET")
-    sub.HandleFunc("/mul", MulHandler).Methods("GET")
+        sub.HandleFunc("/mul", MulHandler).Methods("GET")
 	sub.HandleFunc("/div", DivHandler).Methods("GET")
-    http.Handle("/", r)
+        http.Handle("/", r)
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
