@@ -152,7 +152,7 @@ func DivHandler(w http.ResponseWriter, r *http.Request) {
            http.Error(w, er.Error(), 404)
            return
         }
-    w.Write(json_data) 
+        w.Write(json_data) 
 }
 
 func main(){
